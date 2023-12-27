@@ -25,14 +25,18 @@ SYSFILES:= startup_ch32v00x.S system_ch32v00x.c
 
 ## TARGETS ###################################################################
 
-$(TARGET).hex : $(TARGET).elf
-	$(OD) -S $^ > $(TARGET).lst
-	$(OD) -t $^ > $(TARGET).map
+all : $(TARGET).bin $(TARGET).hex $(TARGET).elf
+
+$(TARGET).bin : $(TARGET).elf
 	$(OC) -O binary $< $@
+
+$(TARGET).hex : $(TARGET).elf
 	$(OC) -O ihex $< $@
 
 $(TARGET).elf : $(SRCFILES) $(SYSFILES)
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
-
+	$(OD) -S $@ > $(TARGET).lst
+	$(OD) -t $@ > $(TARGET).map
+	
 clean :
 	rm -rf $(TARGET).elf $(TARGET).bin $(TARGET).hex $(TARGET).lst $(TARGET).map
